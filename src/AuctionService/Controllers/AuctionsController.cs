@@ -96,13 +96,13 @@ namespace AuctionService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> UpdateAuction(Guid id)
+        public async Task<ActionResult> DeleteAuction(Guid id)
         {
-            var auction = await _context.Auctions
-                .Include(x => x.Item)
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var auction = await _context.Auctions.FindAsync(id);
 
             if (auction == null) return NotFound();
+
+            // TODO: ckeck seller == username
 
             _context.Auctions.Remove(auction);
 
