@@ -1,18 +1,18 @@
-﻿{
+{
   "profiles": {
     "http": {
       "commandName": "Project",
       "launchBrowser": false,
-      "environmentVariables": {
+       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:7001"
+      "applicationUrl": "http://localhost:7002"
     },
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": false,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/AuctionService",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/SearchService",
       "environmentVariables": {
         "ASPNETCORE_URLS": "https://+:443;http://+:80"
       },

@@ -8,8 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1CB8E5BA-9DFF-4052-A1AF-20EC9BB3BD93}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
-		dockerfile = dockerfile
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService", "src\SearchService\SearchService.csproj", "{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +22,10 @@ Global
 		{12716688-3767-48B7-BB76-ABB7AA21512C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12716688-3767-48B7-BB76-ABB7AA21512C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12716688-3767-48B7-BB76-ABB7AA21512C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 services:
-  db:
+  mssql:
     container_name: mssql-server
     environment:
         
@@ -20,4 +20,26 @@ services:
         interval: 10s
         retries: 10
         start_period: 10s
-        timeout: 3s     
+        timeout: 3s
+    volumes:
+        - mssql_data:/var/opt/mssql
+  mongodb:
+    container_name: mongoDb  
+    image: mongodb/mongodb-community-server:5.0-ubuntu2004
+    environment:
+    - MONGODB_INITDB_ROOT_USERNAME=root
+    - MONGODB_INITDB_ROOT_PASSWORD=mongopw
+    ports:
+    - "27017:27017"
+    volumes: 
+    - mongodata:/var/lib/mongodb/data
+volumes:
+    mongodata: 
+    mssql_data:
+  
+  
+   
+  
+  
+  
+        
