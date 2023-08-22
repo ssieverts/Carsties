@@ -7,10 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuctionService", "src\Aucti
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1CB8E5BA-9DFF-4052-A1AF-20EC9BB3BD93}"
 	ProjectSection(SolutionItems) = preProject
-		.dockerignore = .dockerignore
 		src\AuctionService\.dockerignore = src\AuctionService\.dockerignore
 		docker-compose.yml = docker-compose.yml
-		src\AuctionService\Dockerfile = src\AuctionService\Dockerfile
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService", "src\SearchService\SearchService.csproj", "{8EF8043B-DBC4-46F5-8E96-9D1BC0F98DFA}"
