@@ -1,9 +1,6 @@
-using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
-using MongoDB.Entities;
+using System.Net;
 using Polly;
 using Polly.Extensions.Http;
-using SearchService.Models;
 using SearchService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,18 +18,24 @@ var app = builder.Build();
 app.UseAuthorization();
 app.MapControllers();
 
-try
+app.Lifetime.ApplicationStarted.Register(async () =>
 {
-    DbInitializer.InitDb(app);
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-}
+    try
+    {
+        DbInitializer.InitDb(app);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
+});
+
 
 app.Run();
 
 static IAsyncPolicy<HttpResponseMessage> GetPolicy()
-    => HttpPolicyExtensions.HandleTransientHttpError()
-    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
-    .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(3));
+{
+    return HttpPolicyExtensions.HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+        .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(3));
+}
