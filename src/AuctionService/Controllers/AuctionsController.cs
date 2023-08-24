@@ -11,6 +11,8 @@ using AutoMapper;
 using AuctionService.DTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using AutoMapper.QueryableExtensions;
+using MassTransit;
+using Contracts;
 
 namespace AuctionService.Controllers
 {
@@ -20,9 +22,15 @@ namespace AuctionService.Controllers
     {
         private readonly AuctionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public AuctionsController(AuctionDbContext context, IMapper mapper)
+        public AuctionsController(
+            AuctionDbContext context,
+            IMapper mapper,
+            IPublishEndpoint publishEndpoint
+        )
         {
+            _publishEndpoint = publishEndpoint;
             _context = context;
             _mapper = mapper;
         }
@@ -35,11 +43,10 @@ namespace AuctionService.Controllers
 
             if (!string.IsNullOrEmpty(date))
             {
-               query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
+                query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
             }
 
             return await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync();
-
         }
 
         [HttpGet("{id}")]
@@ -49,11 +56,10 @@ namespace AuctionService.Controllers
                 .Include(x => x.Item)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (auction == null) return NotFound()
-                    ; 
+            if (auction == null)
+                return NotFound();
 
             return _mapper.Map<AuctionDto>(auction);
-
         }
 
         [HttpPost]
@@ -65,14 +71,19 @@ namespace AuctionService.Controllers
 
             _context.Add(auction);
 
+            var newAuction = _mapper.Map<AuctionDto>(auction);
+
+            await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
             var result = await _context.SaveChangesAsync() > 0;
 
-            if(!result) return BadRequest("Could not save changes to the DB");
+            
 
-            return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, _mapper.Map<AuctionDto>(auction));
-                       
+            if (!result)
+                return BadRequest("Could not save changes to the DB");
+
+            return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, newAuction);
         }
-
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto updateAuctionDto)
@@ -80,8 +91,9 @@ namespace AuctionService.Controllers
             var auction = await _context.Auctions
                 .Include(x => x.Item)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            
-            if (auction == null) return NotFound();
+
+            if (auction == null)
+                return NotFound();
 
             // TODO: check seller == username
 
@@ -91,10 +103,13 @@ namespace AuctionService.Controllers
             auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
             auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
 
+            await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
+
             var result = await _context.SaveChangesAsync() > 0;
 
-            if(result) return Ok();
-            
+            if (result)
+                return Ok();
+
             return BadRequest("Problem saving changes.");
         }
 
@@ -103,7 +118,8 @@ namespace AuctionService.Controllers
         {
             var auction = await _context.Auctions.FindAsync(id);
 
-            if (auction == null) return NotFound();
+            if (auction == null)
+                return NotFound();
 
             // TODO: ckeck seller == username
 
@@ -111,11 +127,11 @@ namespace AuctionService.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok();
+            if (result)
+                return Ok();
 
             return BadRequest("Problem deleting auction.");
         }
-
 
         private bool AuctionExists(Guid id)
         {

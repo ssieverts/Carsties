@@ -2,44 +2,36 @@ services:
   mssql:
     container_name: mssql-server
     environment:
-        
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "yourStrongRocks9151"
-
-    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
     image: mcr.microsoft.com/mssql/server:latest
     ports:
-    - "1433:1433"
-    # If you really want to use MS SQL Server, uncomment the following line
-    #image: mcr.microsoft.com/mssql/server
-
-    restart: always
-
+      - 1433:1433
     healthcheck:
-        test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P example_123 -Q 'SELECT 1' || exit 1"]
-        interval: 10s
-        retries: 10
-        start_period: 10s
-        timeout: 3s
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P yourStrongRocks9151 -Q 'SELECT 1' || exit 1",
+        ]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
     volumes:
-        - mssql_data:/var/opt/mssql
+      - /var/opt/mssql
   mongodb:
-    container_name: mongoDb  
+    container_name: mongoDb
     image: mongodb/mongodb-community-server:5.0-ubuntu2004
     environment:
-    - MONGODB_INITDB_ROOT_USERNAME=root
-    - MONGODB_INITDB_ROOT_PASSWORD=mongopw
+      - MONGODB_INITDB_ROOT_USERNAME=root
+      - MONGODB_INITDB_ROOT_PASSWORD=mongopw
     ports:
-    - "27017:27017"
-    volumes: 
-    - mongodata:/var/lib/mongodb/data
-volumes:
-    mongodata: 
-    mssql_data:
-  
-  
-   
-  
-  
-  
-        
+      - "27017:27017"
+    volumes:
+      - /var/lib/mongodb/data
+  rabbitmq:
+    container_name: rabbitMq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672

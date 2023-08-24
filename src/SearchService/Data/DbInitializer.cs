@@ -3,7 +3,7 @@ using MongoDB.Entities;
 using System.Net.NetworkInformation;
 using SearchService.Models;
 using System.Text.Json;
-using SearchService.Services;
+using SearchService;
 
 public class DbInitializer
 {

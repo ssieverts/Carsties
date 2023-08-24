@@ -1,4 +1,5 @@
 ﻿using AuctionService.Entities;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuctionService.Data;
@@ -12,13 +13,12 @@ public class AuctionDbContext : DbContext
 
     public DbSet<Auction> Auctions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        // connect to sql server with connection string from app settings
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //use this to configure the model
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
     }
 }

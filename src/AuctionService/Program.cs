@@ -1,4 +1,6 @@
+using AuctionService.Consumers;
 using AuctionService.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +14,29 @@ builder.Services.AddDbContext<AuctionDbContext>(opt =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMassTransit(x =>
+{
+    x.AddEntityFrameworkOutbox<AuctionDbContext>(o => {
+        o.QueryDelay = TimeSpan.FromSeconds(10);
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        o.UseSqlServer();
+        o.UseBusOutbox();
+    });
+
+    x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
+    x.AddConsumersFromNamespaceContaining<AuctionUpdatedFaultConsumer>();
+    x.AddConsumersFromNamespaceContaining<AuctionDeletedFaultConsumer>();
+
+    x.SetEndpointNameFormatter( new KebabCaseEndpointNameFormatter("auction", false));
+
+    x.UsingRabbitMq(
+        (context, cfg) =>
+        {
+            cfg.ConfigureEndpoints(context);
+        }
+    );
+});
+
 
 var app = builder.Build();
 
@@ -29,8 +52,7 @@ try
 }
 catch (Exception e)
 {
-
-	Console.WriteLine(e);
+    Console.WriteLine(e);
 }
 
 app.Run();
