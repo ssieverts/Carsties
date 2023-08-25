@@ -1,21 +1,46 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+# WORKDIR /app
+# EXPOSE 7002
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-WORKDIR /app
-EXPOSE 7001
+# FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+# WORKDIR /src
+# COPY ["AuctionService/AuctionService.csproj", "AuctionService/"]
+# RUN dotnet restore "AuctionService/AuctionService.csproj"
+# COPY . .
+# WORKDIR "/src/AuctionService"
+# RUN dotnet build "AuctionService.csproj" -c Release -o /app/build
+
+# FROM build AS publish
+# RUN dotnet publish "AuctionService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# FROM base AS final
+# WORKDIR /app
+# COPY --from=publish /app/publish .
+# ENTRYPOINT ["dotnet", "AuctionService.dll"]
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["AuctionService/AuctionService.csproj", "AuctionService/"]
-RUN dotnet restore "AuctionService/AuctionService.csproj"
-COPY . .
-WORKDIR "/src/AuctionService"
-RUN dotnet build "AuctionService.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "AuctionService.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AuctionService.dll"]
+EXPOSE 80
+
+# Copy proj file and restore as distict layers
+COPY Carsties.sln Carsties.sln
+COPY src/AuctionService/AuctionService.csproj src/AuctionService/AuctionService.csproj
+COPY src/SearchService/SearchService.csproj src/SearchService/SearchService.csproj
+COPY src/IdentityService/IdentityService.csproj src/IdentityService/IdentityService.csproj
+COPY src/GatewayService/GatewayService.csproj src/GatewayService/GatewayService.csproj
+COPY src/Contracts/Contracts.csproj src/Contracts/Contracts.csproj
+
+# Restore deps
+RUN dotnet restore Carsties.sln
+
+# Copy the app folders over
+COPY src/AuctionService src/AuctionService
+COPY src/Contracts src/Contracts
+WORKDIR /app/src/AuctionService
+RUN dotnet publish -c Release -o /app/src/out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /app
+COPY --from=build /app/src/out .
+ENTRYPOINT [ "dotnet"  "AuctionService.dll"]
