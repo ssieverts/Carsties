@@ -32,10 +32,7 @@ builder.Services.AddMassTransit(x =>
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
 
     x.UsingRabbitMq(
-        (context, cfg) =>
-        {
-            cfg.ConfigureEndpoints(context);
-        }
+        (context, cfg) => { cfg.ConfigureEndpoints(context); }
     );
 });
 

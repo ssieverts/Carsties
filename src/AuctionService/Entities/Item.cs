@@ -12,6 +12,6 @@ public class Item
     public string Color { get; set; }
     public int Mileage { get; set; }
     public string ImageUrl { get; set; }
-    Auction Auction { get; set; }
-    Guid AuctionId { get; set; }
+    private Auction Auction { get; set; }
+    private Guid AuctionId { get; set; }
 }

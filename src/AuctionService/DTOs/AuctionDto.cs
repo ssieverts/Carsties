@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AuctionService.DTOs;
+﻿namespace AuctionService.DTOs;
 
 public class AuctionDto
 {
