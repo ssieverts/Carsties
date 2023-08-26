@@ -14,13 +14,12 @@ COPY src/Contracts/Contracts.csproj src/Contracts/Contracts.csproj
 RUN dotnet restore Carsties.sln
 
 # Copy the app folders over
-COPY src/SearchService src/SearchService
-COPY src/Contracts src/Contracts
-WORKDIR /app/src/SearchService
+COPY src/IdentityService src/IdentityService
+WORKDIR /app/src/IdentityService
 RUN dotnet publish -c Release -o /app/src/out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app/src/out .
-ENTRYPOINT ["dotnet", "SearchService.dll"]
+ENTRYPOINT ["dotnet", "IdentityService.dll"]
