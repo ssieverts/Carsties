@@ -51,6 +51,7 @@ services:
     depends_on:
       - mssql
       - rabbitmq
+      - identity-svc
   search-svc:
     image: dotnetlearning/search-svc:latest
     build:
@@ -67,6 +68,7 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+      - auction-svc
   identity-svc:
     image: dotnetlearning/identity-svc:latest
     build:
@@ -91,3 +93,5 @@ services:
       - IdentityServiceUrl=http://identity-svc
     ports:
       - 6001:80
+    depends_on:
+      - identity-svc
