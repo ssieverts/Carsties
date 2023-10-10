@@ -26,22 +26,22 @@ const orderButtons = [
 ];
 
 const filterButtons = [
-    {
-      label: "Live Auctions",
-      icon: GiFlame,
-      value: "live",
-    },
-    {
-      label: "Ending in < 6 hours",
-      icon: GiFinishLine,
-      value: "endingSoon",
-    },
-    {
-      label: "Completed",
-      icon: BsStopwatchFill,
-      value: "finished",
-    },
-  ];
+  {
+    label: "Live Auctions",
+    icon: GiFlame,
+    value: "live",
+  },
+  {
+    label: "Ending in < 6 hours",
+    icon: GiFinishLine,
+    value: "endingSoon",
+  },
+  {
+    label: "Completed",
+    icon: BsStopwatchFill,
+    value: "finished",
+  },
+];
 
 export default function Filters() {
   const pageSize = useParamsStore((state) => state.pageSize);
@@ -51,38 +51,35 @@ export default function Filters() {
 
   return (
     <div className="flex justify-between items-center mb-4">
-      
       <div>
         <span className="upper-case text-sm text-gray-500 mr-2">Filter by</span>
         <Button.Group>
-            {filterButtons.map(({label, icon: Icon, value}) => (
-                <Button
-                    key={value}
-                    onClick= {() => setParams({filterBy: value})}
-                    color={`${filterBy === value ? 'red' : 'gray'}`}
-                    >
-                        <Icon className='mr-3 h-4 w-4' />
-                        {label}
-                </Button>
-            ))}
+          {filterButtons.map(({ label, icon: Icon, value }) => (
+            <Button
+              key={value}
+              onClick={() => setParams({ filterBy: value })}
+              color={`${filterBy === value ? "red" : "gray"}`}
+            >
+              <Icon className="mr-3 h-4 w-4" />
+              {label}
+            </Button>
+          ))}
         </Button.Group>
       </div>
-      
-      
-      
+
       <div>
         <span className="upper-case text-sm text-gray-500 mr-2">Order by</span>
         <Button.Group>
-            {orderButtons.map(({label, icon: Icon, value}) => (
-                <Button
-                    key={value}
-                    onClick= {() => setParams({orderBy: value})}
-                    color={`${orderBy === value ? 'red' : 'gray'}`}
-                    >
-                        <Icon className='mr-3 h-4 w-4' />
-                        {label}
-                </Button>
-            ))}
+          {orderButtons.map(({ label, icon: Icon, value }) => (
+            <Button
+              key={value}
+              onClick={() => setParams({ orderBy: value })}
+              color={`${orderBy === value ? "red" : "gray"}`}
+            >
+              <Icon className="mr-3 h-4 w-4" />
+              {label}
+            </Button>
+          ))}
         </Button.Group>
       </div>
 
