@@ -6,7 +6,7 @@ import {signIn} from 'next-auth/react';
 
 export default function LoginButton() {
   return (
-    <Button outline onClick={() => signIn('id-server', {callbackUrl: 'http://localhost:3000'}, {prompt: 'login'})}>
+    <Button  outline onClick={() => signIn('id-server', {callbackUrl: '/'}, {prompt: 'login'})}>
         Login
     </Button>
   )
