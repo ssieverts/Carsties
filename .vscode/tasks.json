@@ -36,6 +36,15 @@
                 "${workspaceFolder}/Carsties.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "frontend/web-app/tsconfig.json",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build",
+            "label": "tsc: build - frontend/web-app/tsconfig.json"
         }
     ]
 }

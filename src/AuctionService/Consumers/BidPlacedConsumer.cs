@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AuctionService.Data;
 using Contracts;
 using MassTransit;
@@ -21,11 +17,13 @@ namespace AuctionService.Consumers
         {
             Console.WriteLine("---> Consuming bid placed");
 
-            var auction = await _dbContext.Auctions.FindAsync(context.Message.AuctionId);
+            var auction = await _dbContext.Auctions.FindAsync(Guid.Parse(context.Message.AuctionId));
 
-            if(auction.CurrentHighBid == null 
-            || context.Message.BidStatus.Contains("Accepted")
-            && context.Message.Amount > auction.CurrentHighBid)
+            if (
+                auction.CurrentHighBid == null
+                || context.Message.BidStatus.Contains("Accepted")
+                    && context.Message.Amount > auction.CurrentHighBid
+            )
             {
                 auction.CurrentHighBid = context.Message.Amount;
                 await _dbContext.SaveChangesAsync();
