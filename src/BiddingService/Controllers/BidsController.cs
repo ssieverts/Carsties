@@ -25,7 +25,7 @@ public class BidsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BidDto>> PlaceBid(string auctionId, int amount)
     {
-        var auction = await DB.Find<Auction>().OneAsync(Guid.Parse(auctionId));
+        var auction = await DB.Find<Auction>().OneAsync(auctionId);
 
         if (auction == null)
         {
