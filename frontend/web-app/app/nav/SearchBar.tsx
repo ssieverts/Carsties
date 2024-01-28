@@ -34,13 +34,8 @@ export default function SearchBar() {
         type="text"
         placeholder="Search for cars by make, model, and color"
         className="
-                flex-grow
-                pl-5
-                bg-transparent
-                focus:outline-none
-                border-transparent
-                focus:border-transparent
-                focus:ring-0
+                custom-input
+                text-sm
                 text-gray-600
             "
       />
