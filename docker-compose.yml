@@ -1,3 +1,8 @@
+networks:
+  custom:
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 services:
   mssql:
     container_name: mssql-server
@@ -19,6 +24,8 @@ services:
       timeout: 3s
     volumes:
       - /var/opt/mssql
+    networks:
+      custom:
   mongodb:
     container_name: mongoDb
     image: mongodb/mongodb-community-server:5.0-ubuntu2004
@@ -29,12 +36,16 @@ services:
       - "27017:27017"
     volumes:
       - /var/lib/mongodb/data
+    networks:
+      custom:
   rabbitmq:
     container_name: rabbitMq
     image: rabbitmq:3-management-alpine
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      custom:
   auction-svc:
     image: dotnetlearning/auction-svc:latest
     build:
@@ -54,6 +65,8 @@ services:
     ports:
       - 7001:80
       - 7777:7777
+    networks:
+      custom:
     depends_on:
       - mssql
       - rabbitmq
@@ -71,6 +84,8 @@ services:
       - AuctionServiceUrl=http://auction-svc
     ports:
       - 7002:80
+    networks:
+      custom:
     depends_on:
       - mongodb
       - rabbitmq
@@ -84,9 +99,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
+      - ClientApp=http://app.carsties.com
       - ConnectionStrings__DefaultConnection=Data Source=mssql,1433;User ID=sa;Password=yourStrongRocks9151;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Database=Identity
-    ports:
-      - 5000:80
+      - VIRTUAL_HOST=id.carsties.com
+    networks:
+      custom:
+        ipv4_address: 10.5.0.200
     depends_on:
       - mssql
       - mongodb
@@ -99,9 +117,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:80
-      - IdentityServiceUrl=http://identity-svc
-    ports:
-      - 6001:80
+      - ClientApp=https://app.carsties.com
+      - VIRTUAL_HOST=api.carsties.com
+    networks:
+      custom:
     depends_on:
       - identity-svc
   bid-svc:
@@ -118,6 +137,8 @@ services:
       - GrpcAuction=http://auction-svc:7777
     ports:
       - 7003:80
+    networks:
+      custom:
     depends_on:
       - mongodb
       - rabbitmq
@@ -132,5 +153,37 @@ services:
       - RabbitMq__Host=rabbitmq
     ports:
       - 7004:80
+    networks:
+      custom:
     depends_on:
       - rabbitmq
+  web-app:
+    image: trycatchlearn/web-app
+    build:
+      context: .
+      dockerfile: frontend/web-app/Dockerfile
+    volumes:
+      - /var/lib/web/data
+    extra_hosts:
+      - id.carsties.com:10.5.0.200
+    environment:
+      - NEXTAUTH_SECRET=somethingreallyreallysecret
+      - NEXTAUTH_URL=http://app.carsties.com
+      - NEXTAUTH_URL_INTERNAL=http://web-app:3000
+      - API_URL=http://gateway-svc/
+      - ID_URL=http://id.carsties.com
+      - NEXT_PUBLIC_NOTIFY_URL=http://gateway-svc/notifications
+      - VIRTUAL_HOST=app.carsties.com
+      - VIRTUAL_PORT=3000
+    networks:
+      custom:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      custom:
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./devcerts:/etc/nginx/certs

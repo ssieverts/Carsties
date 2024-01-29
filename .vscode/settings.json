@@ -1,6 +1,11 @@
 {
   "dotnet.defaultSolution": "Carsties.sln",
   "cSpell.words": [
-    "mongopw"
+    "datepicker",
+    "mongopw",
+    "Pkce",
+    "Serilog",
+    "signalr",
+    "tailwindcss"
   ]
 }

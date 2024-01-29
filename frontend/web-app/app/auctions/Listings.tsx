@@ -49,7 +49,7 @@ export default function Listings() {
       setData(data);
       setLoading(false);
     });
-  }, [url]);
+  }, [url, setData]);
 
   if (loading) return <div><h3>Loading...</h3></div>;
 
