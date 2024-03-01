@@ -9,6 +9,7 @@
     "Pkce",
     "Serilog",
     "signalr",
+    "ssieverts",
     "tailwindcss"
   ]
 }
