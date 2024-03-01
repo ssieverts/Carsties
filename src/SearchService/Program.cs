@@ -23,6 +23,12 @@ builder.Services.AddMassTransit(x =>
     x.UsingRabbitMq(
         (context, cfg) =>
         {
+            cfg.UseMessageRetry(r =>
+            {
+                r.Handle<RabbitMqConnectionException>();
+                r.Interval(5, TimeSpan.FromSeconds(10));
+            });
+
             cfg.Host(
                 builder.Configuration["RabbitMq:Host"],
                 "/",
@@ -32,12 +38,16 @@ builder.Services.AddMassTransit(x =>
                     host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
                 }
             );
-            cfg.ReceiveEndpoint("search-auction-created", e => {
-                e.UseMessageRetry(r => r.Interval(5,5));
-                e.ConfigureConsumer<AuctionCreatedConsumer>(context);
-                e.ConfigureConsumer<AuctionUpdatedConsumer>(context);
-                e.ConfigureConsumer<AuctionDeletedConsumer>(context);
-            });
+            cfg.ReceiveEndpoint(
+                "search-auction-created",
+                e =>
+                {
+                    e.UseMessageRetry(r => r.Interval(5, 5));
+                    e.ConfigureConsumer<AuctionCreatedConsumer>(context);
+                    e.ConfigureConsumer<AuctionUpdatedConsumer>(context);
+                    e.ConfigureConsumer<AuctionDeletedConsumer>(context);
+                }
+            );
 
             cfg.ConfigureEndpoints(context);
         }
@@ -51,17 +61,10 @@ var app = builder.Build();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Lifetime.ApplicationStarted.Register(async () =>
-{
-    try
-    {
-        await DbInitializer.InitDb(app);
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
-});
+Policy
+    .Handle<TimeoutException>()
+    .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(10))
+    .ExecuteAndCapture(async () => await DbInitializer.InitDb(app));
 
 app.Run();
 

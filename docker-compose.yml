@@ -47,7 +47,7 @@ services:
     networks:
       custom:
   auction-svc:
-    image: dotnetlearning/auction-svc:latest
+    image: nicklivia/auction-svc:latest
     build:
       context: .
       dockerfile: src/AuctionService/Dockerfile
@@ -72,7 +72,7 @@ services:
       - rabbitmq
       - identity-svc
   search-svc:
-    image: dotnetlearning/search-svc:latest
+    image: nicklivia/search-svc:latest
     build:
       context: .
       dockerfile: src/SearchService/Dockerfile
@@ -92,7 +92,7 @@ services:
       - identity-svc
       - auction-svc
   identity-svc:
-    image: dotnetlearning/identity-svc:latest
+    image: nicklivia/identity-svc:latest
     build:
       context: .
       dockerfile: src/IdentityService/Dockerfile
@@ -110,7 +110,7 @@ services:
       - mongodb
       - rabbitmq
   gateway-svc:
-    image: dotnetlearning/gateway-svc:latest
+    image: nicklivia/gateway-svc:latest
     build:
       context: .
       dockerfile: src/GatewayService/Dockerfile
@@ -124,7 +124,7 @@ services:
     depends_on:
       - identity-svc
   bid-svc:
-    image: dotnetlearning/bid-svc:latest
+    image: nicklivia/bid-svc:latest
     build:
       context: .
       dockerfile: src/BiddingService/Dockerfile
@@ -143,7 +143,7 @@ services:
       - mongodb
       - rabbitmq
   notify-svc:
-    image: dotnetlearning/notify-svc:latest
+    image: nicklivia/notify-svc:latest
     build:
       context: .
       dockerfile: src/NotificationService/Dockerfile
@@ -158,7 +158,7 @@ services:
     depends_on:
       - rabbitmq
   web-app:
-    image: trycatchlearn/web-app
+    image: nicklivia/web-app
     build:
       context: .
       dockerfile: frontend/web-app/Dockerfile

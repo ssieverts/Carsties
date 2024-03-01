@@ -1,8 +1,11 @@
 {
   "dotnet.defaultSolution": "Carsties.sln",
   "cSpell.words": [
+    "buildx",
     "datepicker",
+    "DOCKERHUB",
     "mongopw",
+    "nicklivia",
     "Pkce",
     "Serilog",
     "signalr",
